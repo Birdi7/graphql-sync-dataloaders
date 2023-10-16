@@ -1,3 +1,4 @@
+import threading
 from typing import (
     Any,
     Callable,
@@ -11,7 +12,7 @@ _PENDING = "PENDING"
 _FINISHED = "FINISHED"
 
 
-class SyncFuture:
+class SyncFuture(threading.local):
 
     _state = _PENDING
     _result: Optional[Any] = None
