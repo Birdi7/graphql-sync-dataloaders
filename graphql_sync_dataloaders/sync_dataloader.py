@@ -29,8 +29,7 @@ dataloader_batch_callbacks = DataloaderBatchCallbacks()
 
 
 class SyncDataLoader(threading.local):
-    def __init__(self, batch_load_fn):
-        self._batch_load_fn = batch_load_fn
+    def __init__(self):
         self._cache = {}
         self._queue = []
 
@@ -56,7 +55,7 @@ class SyncDataLoader(threading.local):
         self._queue = []
 
         keys = [item[0] for item in queue]
-        values = self._batch_load_fn(keys)
+        values = self.batch_load_fn(keys)
         if not is_collection(values) or len(keys) != len(values):
             raise ValueError("The batch loader does not return an expected result")
 
@@ -71,3 +70,6 @@ class SyncDataLoader(threading.local):
                 self.clear(key)
                 if not future.done():
                     future.set_exception(error)
+    
+    def batch_load_fn(self, keys: list) -> list:
+        raise NotImplementedError()
