@@ -28,7 +28,7 @@ class DataloaderBatchCallbacks(threading.local):
 dataloader_batch_callbacks = DataloaderBatchCallbacks()
 
 
-class SyncDataLoader:
+class SyncDataLoader(threading.local):
     def __init__(self, batch_load_fn):
         self._batch_load_fn = batch_load_fn
         self._cache = {}
