@@ -33,7 +33,7 @@ class SyncDataLoader(threading.local):
         self._cache = {}
         self._queue = []
 
-    def load(self, key):
+    def load(self, key) -> SyncFuture:
         try:
             return self._cache[key]
         except KeyError:
@@ -73,3 +73,17 @@ class SyncDataLoader(threading.local):
     
     def batch_load_fn(self, keys: list) -> list:
         raise NotImplementedError()
+
+    def clear_all(self):
+        self._cache.clear()
+
+    def prime(self, key, obj):
+        self._cache[key] = obj
+
+    def load_many(self, keys: list) -> list[SyncFuture]:
+        if not keys:
+            raise ValueError("No keys to load")
+        if len(keys) == 1:
+            return [self.load(keys[0])]
+
+        return [self.load(key) for key in keys]
