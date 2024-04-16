@@ -81,9 +81,4 @@ class SyncDataLoader(threading.local):
         self._cache[key] = obj
 
     def load_many(self, keys: list) -> list[SyncFuture]:
-        if not keys:
-            raise ValueError("No keys to load")
-        if len(keys) == 1:
-            return [self.load(keys[0])]
-
         return [self.load(key) for key in keys]
