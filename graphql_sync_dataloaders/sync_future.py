@@ -1,4 +1,5 @@
 import threading
+import typing
 from typing import (
     Any,
     Callable,
@@ -11,6 +12,10 @@ from .exceptions import InvalidStateError
 _PENDING = "PENDING"
 _FINISHED = "FINISHED"
 
+
+class Thenable(typing.Protocol):
+    def then(self, on_complete: Callable) -> "SyncFuture":
+        ...
 
 class SyncFuture(threading.local):
 
