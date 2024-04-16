@@ -1,3 +1,4 @@
+import threading
 from typing import (
     Any,
     AsyncIterable,
@@ -32,7 +33,7 @@ from graphql.execution.execute import get_field_def
 from graphql.execution.values import get_argument_values
 
 from .sync_future import SyncFuture
-from .sync_dataloader import dataloader_batch_callbacks
+from .sync_dataloader import dataloader_batch_callbacks_map
 
 
 PENDING_FUTURE = object()
@@ -51,7 +52,7 @@ class DeferredExecutionContext(ExecutionContext):
     ) -> Optional[AwaitableOrValue[Any]]:
         result = super().execute_operation(operation, root_value)
 
-        dataloader_batch_callbacks.run_all_callbacks()
+        dataloader_batch_callbacks_map[threading.get_ident()].run_all_callbacks()
 
         if isinstance(result, SyncFuture):
             if not result.done():

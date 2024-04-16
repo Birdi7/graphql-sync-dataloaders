@@ -62,7 +62,7 @@ class SyncFuture(threading.local):
 
     def _assert_state(self, state: str) -> None:
         if self._state != state:
-            raise InvalidStateError(f"Future is not {state}")
+            raise InvalidStateError(f"Future is not {state}. Current state is {self._state}")
 
     def _finish(self):
         self._state = _FINISHED

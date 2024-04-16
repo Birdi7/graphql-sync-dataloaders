@@ -1,4 +1,5 @@
 import threading
+from collections import defaultdict
 from typing import List, Callable
 from graphql.pyutils import is_collection
 
@@ -25,7 +26,7 @@ class DataloaderBatchCallbacks(threading.local):
             callbacks.pop(0)()
 
 
-dataloader_batch_callbacks = DataloaderBatchCallbacks()
+dataloader_batch_callbacks_map: dict[int, DataloaderBatchCallbacks] = defaultdict(DataloaderBatchCallbacks)
 
 
 class SyncDataLoader(threading.local):
@@ -41,7 +42,7 @@ class SyncDataLoader(threading.local):
             needs_dispatch = not self._queue
             self._queue.append((key, future))
             if needs_dispatch:
-                dataloader_batch_callbacks.add_callback(self.dispatch_queue)
+                dataloader_batch_callbacks_map[threading.get_ident()].add_callback(self.dispatch_queue)
             self._cache[key] = future
             return future
 
